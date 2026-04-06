@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SchoolBoyRugga PM Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body, #root { height: 100%; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0a0a0c; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+  select { appearance: auto; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  FIREBASE SETUP — Follow these steps:                       ║
+  ║                                                              ║
+  ║  1. Go to https://console.firebase.google.com               ║
+  ║  2. Click "Create a project" (or "Add project")             ║
+  ║  3. Name it e.g. "schoolboyrugga-pm", click Continue        ║
+  ║  4. Disable Google Analytics (not needed), Create Project   ║
+  ║  5. On the Project Overview page, click the </> web icon    ║
+  ║     (If you don't see it: gear icon → Project Settings      ║
+  ║      → scroll to "Your apps" → Add app → Web </>)          ║
+  ║  6. Enter app nickname (e.g. "PM Hub"), click Register      ║
+  ║  7. Copy the firebaseConfig values shown and paste them     ║
+  ║     into the config object below                            ║
+  ║  8. Go to Build → Realtime Database → Create Database       ║
+  ║  9. Choose "Start in test mode" → Enable                    ║
+  ║ 10. Done! Open this file in a browser and it works.         ║
+  ║                                                              ║
+  ║  To host on GitHub Pages:                                    ║
+  ║  1. Create a GitHub repo (e.g. schoolboyrugga-pm)           ║
+  ║  2. Upload this file as index.html                          ║
+  ║  3. Go to repo Settings → Pages → Source: main branch      ║
+  ║  4. Your team accesses it at:                                ║
+  ║     https://yourusername.github.io/schoolboyrugga-pm        ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+
+<script>
+  // ═══════════════════════════════════════════════════════════
+  // PASTE YOUR FIREBASE CONFIG HERE (from Firebase Console)
+  // ═══════════════════════════════════════════════════════════
+  const firebaseConfig = {
+    apiKey: "AIzaSyBpeLgRvurJ3YvB7ffeH_NySNAU7MslOxM",
+    authDomain: "schoolboyrugga-pm.firebaseapp.com",
+    databaseURL: "https://schoolboyrugga-pm-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "schoolboyrugga-pm",
+    storageBucket: "schoolboyrugga-pm.firebasestorage.app",
+    messagingSenderId: "462714658011",
+    appId: "1:462714658011:web:0d07bbe49d5b5aeddf00fe"
+  };
+  // ═══════════════════════════════════════════════════════════
+
+  // Initialize Firebase
+  if (firebaseConfig.apiKey !== "YOUR_API_KEY_HERE") {
+    firebase.initializeApp(firebaseConfig);
+    window._fbRef = "pm-hub-data";
+    console.log("Firebase connected!");
+  } else {
+    // Fallback to localStorage if Firebase not configured yet
+    console.warn("Firebase not configured — using localStorage. Edit the firebaseConfig above.");
+    window._fbRef = null;
+  }
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef } = React;
+
+const PHASES_DATA = [
+  { id:"p1",num:1,title:"Project Foundation & Planning",timeline:"Weeks 1–4 (Early–Mid May 2025)",milestone:"Milestone 1 Deliverable",color:"#6C5CE7",
+    tasks:[
+      {id:"t1-1",title:"Sponsor Requirements Confirmation",phase:1,status:"todo",assignee:"Piet",priority:"high",desc:"Conduct formal meetings with Levi to confirm all V1 features. Walk through each requirement and document changes."},
+      {id:"t1-2",title:"Project Charter & Scope Statement",phase:1,status:"todo",assignee:"Tan",priority:"high",desc:"Define project purpose, objectives, constraints, assumptions, boundaries. Include RACI matrix and communication plan."},
+      {id:"t1-3",title:"Methodology Selection & Justification",phase:1,status:"todo",assignee:"Tan",priority:"medium",desc:"Select Agile/Scrum, define sprint length, ceremonies, and map academic deadlines to sprints."},
+      {id:"t1-4",title:"Technical Architecture Design",phase:1,status:"todo",assignee:"Tristan",priority:"high",desc:"Design full system architecture: React Native/Flutter app, React admin dashboard, Firebase/Supabase backend. Produce ERD and schema."},
+      {id:"t1-5",title:"Development Environment Setup",phase:1,status:"todo",assignee:"Tristan",priority:"high",desc:"Set up GitHub repo with branching strategy, CI/CD, project board, and shared dev environments."},
+      {id:"t1-6",title:"Risk Assessment & Mitigation Plan",phase:1,status:"todo",assignee:"Piet",priority:"medium",desc:"Identify key risks (low participation, data inaccuracy, POPIA, performance) and define mitigation strategies."},
+      {id:"t1-7",title:"Wireframes & UI/UX Design",phase:1,status:"todo",assignee:"Taddy",priority:"medium",desc:"Produce wireframes for all V1 screens. Review with Levi for feedback."},
+    ],
+    documents:[{id:"d1-1",name:"Project Charter",status:"not-started"},{id:"d1-2",name:"Requirements Sign-Off",status:"not-started"},{id:"d1-3",name:"Methodology Justification",status:"not-started"},{id:"d1-4",name:"System Architecture Document",status:"not-started"},{id:"d1-5",name:"Database Schema / ERD",status:"not-started"},{id:"d1-6",name:"Technology Stack Justification",status:"not-started"},{id:"d1-7",name:"Risk Register",status:"not-started"},{id:"d1-8",name:"Wireframes & Navigation Flows",status:"not-started"},{id:"d1-9",name:"Sprint Calendar",status:"not-started"},{id:"d1-10",name:"RACI Matrix",status:"not-started"},{id:"d1-11",name:"Dev Environment Guide",status:"not-started"}]
+  },
+  { id:"p2",num:2,title:"Core Backend & Database",timeline:"Weeks 5–8 (Mid May–Mid June 2025)",milestone:"Working backend with API endpoints",color:"#00B894",
+    tasks:[
+      {id:"t2-1",title:"Database Implementation",phase:2,status:"todo",assignee:"Tristan",priority:"high",desc:"Set up cloud database with all collections/tables from ERD. Define indexes. Create seed data."},
+      {id:"t2-2",title:"Authentication System",phase:2,status:"todo",assignee:"Tristan",priority:"high",desc:"Implement registration, login, role-based access (fan/coach/admin), secure sessions."},
+      {id:"t2-3",title:"Core API Endpoints",phase:2,status:"todo",assignee:"Tristan",priority:"high",desc:"Build RESTful API: GET/POST fixtures, results, schools, teams, score submissions. Pagination and filtering."},
+      {id:"t2-4",title:"Score Validation Logic",phase:2,status:"todo",assignee:"Tristan",priority:"high",desc:"Community score submission: pending → validated → verified. Build reliability ranking algorithm."},
+      {id:"t2-5",title:"Instagram Integration Backend",phase:2,status:"todo",assignee:"Tristan",priority:"medium",desc:"Scheduled function to fetch @schoolboyrugga posts. Store in database cache."},
+    ],
+    documents:[{id:"d2-1",name:"API Documentation",status:"not-started"},{id:"d2-2",name:"Database Implementation Report",status:"not-started"},{id:"d2-3",name:"Auth & Authorisation Spec",status:"not-started"},{id:"d2-4",name:"Score Validation Algorithm Doc",status:"not-started"},{id:"d2-5",name:"Instagram Integration Spec",status:"not-started"},{id:"d2-6",name:"Backend Test Report",status:"not-started"}]
+  },
+  { id:"p3",num:3,title:"Admin Dashboard Development",timeline:"Weeks 9–12 (Mid June–Mid July 2025)",milestone:"Semester 1 major deliverable",color:"#FDCB6E",
+    tasks:[
+      {id:"t3-1",title:"Admin Auth & Role Gate",phase:3,status:"todo",assignee:"Tristan",priority:"high",desc:"Admin login, role-based route protection, admin-only enforcement."},
+      {id:"t3-2",title:"Fixtures Manager",phase:3,status:"todo",assignee:"Tristan",priority:"high",desc:"Table view, add/edit form, CSV bulk import, calendar view."},
+      {id:"t3-3",title:"Results & Score Moderation",phase:3,status:"todo",assignee:"Tristan",priority:"high",desc:"Moderation queue with approve/edit/reject. Direct result entry. Auto-stats recalculation."},
+      {id:"t3-4",title:"Schools & Teams Manager",phase:3,status:"todo",assignee:"Tristan",priority:"medium",desc:"Schools CRUD, teams per school, search functionality."},
+      {id:"t3-5",title:"Player Profiles Manager",phase:3,status:"todo",assignee:"Tristan",priority:"medium",desc:"Player CRUD, per-match stats entry, aggregated stats display."},
+      {id:"t3-6",title:"Dashboard Overview Screen",phase:3,status:"todo",assignee:"Tristan",priority:"low",desc:"Metrics: fixtures this week, pending submissions, users, schools, activity."},
+    ],
+    documents:[{id:"d3-1",name:"Admin Dashboard User Guide",status:"not-started"},{id:"d3-2",name:"Admin Dashboard Technical Doc",status:"not-started"},{id:"d3-3",name:"CSV Import Template",status:"not-started"},{id:"d3-4",name:"Admin Testing Report",status:"not-started"}]
+  },
+  { id:"p4",num:4,title:"Consumer Mobile App",timeline:"Weeks 13–18 (Mid July–End Aug 2025)",milestone:"System Demo / Code Week",color:"#E17055",
+    tasks:[
+      {id:"t4-1",title:"App Shell & Navigation",phase:4,status:"todo",assignee:"Tristan",priority:"high",desc:"React Native/Flutter scaffold, bottom tab nav, design system, state management."},
+      {id:"t4-2",title:"Fixtures Screen",phase:4,status:"todo",assignee:"Tristan",priority:"high",desc:"Fixtures list grouped by date, filters, detail view."},
+      {id:"t4-3",title:"Results Screen",phase:4,status:"todo",assignee:"Tristan",priority:"high",desc:"Results with filters, verification status, linked team profiles."},
+      {id:"t4-4",title:"Team Profiles Screen",phase:4,status:"todo",assignee:"Tristan",priority:"high",desc:"Team search, profile with season record, stats, fixtures, results."},
+      {id:"t4-5",title:"User Registration & Login",phase:4,status:"todo",assignee:"Tristan",priority:"high",desc:"Registration, login, profile screen, forgot password, submission history."},
+      {id:"t4-6",title:"Score Submission Flow",phase:4,status:"todo",assignee:"Tristan",priority:"high",desc:"In-app form: select fixture, enter scores, submit. Confirmation."},
+      {id:"t4-7",title:"Score Validation Interface",phase:4,status:"todo",assignee:"Tristan",priority:"medium",desc:"Confirm/dispute interface, real-time vote counts."},
+      {id:"t4-8",title:"Instagram Feed Integration",phase:4,status:"todo",assignee:"Tristan",priority:"medium",desc:"In-app Instagram feed from cached posts, deep link."},
+    ],
+    documents:[{id:"d4-1",name:"Mobile App Technical Doc",status:"not-started"},{id:"d4-2",name:"UI/UX Design Specs",status:"not-started"},{id:"d4-3",name:"App Testing Report",status:"not-started"},{id:"d4-4",name:"User Flow Diagrams",status:"not-started"}]
+  },
+  { id:"p5",num:5,title:"Integration, Testing & QA",timeline:"Weeks 19–22 (September 2025)",milestone:"Code Week / Pre-presentation polish",color:"#0984E3",
+    tasks:[
+      {id:"t5-1",title:"End-to-End Integration Testing",phase:5,status:"todo",assignee:"Tan",priority:"high",desc:"Test full flow: admin adds fixtures → app shows them → user submits score → admin approves."},
+      {id:"t5-2",title:"Performance & Load Testing",phase:5,status:"todo",assignee:"Tristan",priority:"high",desc:"Simulate peak match-day load. Fix bottlenecks. Optimise indexes."},
+      {id:"t5-3",title:"Security & POPIA Compliance Audit",phase:5,status:"todo",assignee:"Piet",priority:"high",desc:"Security review, POPIA check, consent, under-18 handling, privacy policy."},
+      {id:"t5-4",title:"User Acceptance Testing (UAT)",phase:5,status:"todo",assignee:"Taddy",priority:"high",desc:"Give Levi and test users access. Collect feedback. Fix critical issues."},
+      {id:"t5-5",title:"Cross-Platform Testing",phase:5,status:"todo",assignee:"Tristan",priority:"medium",desc:"Test across devices, iOS/Android, browser compat for admin."},
+    ],
+    documents:[{id:"d5-1",name:"Integration Test Plan & Results",status:"not-started"},{id:"d5-2",name:"Performance Test Report",status:"not-started"},{id:"d5-3",name:"Security Audit Report",status:"not-started"},{id:"d5-4",name:"POPIA Compliance Checklist",status:"not-started"},{id:"d5-5",name:"UAT Feedback Report",status:"not-started"},{id:"d5-6",name:"Cross-Platform Report",status:"not-started"},{id:"d5-7",name:"Bug Tracker Export",status:"not-started"}]
+  },
+  { id:"p6",num:6,title:"Final Presentations & Deliverables",timeline:"Weeks 23–26 (October 2025)",milestone:"Final Presentations, IT Showcase, Final Docs",color:"#E84393",
+    tasks:[
+      {id:"t6-1",title:"Final Presentation Preparation",phase:6,status:"todo",assignee:"Tan",priority:"high",desc:"Build deck, demo script, rehearse, Q&A prep."},
+      {id:"t6-2",title:"IT Showcase Preparation",phase:6,status:"todo",assignee:"Taddy",priority:"high",desc:"Poster/banner, demo station, elevator pitch, demo data."},
+      {id:"t6-3",title:"Final Documentation Compilation",phase:6,status:"todo",assignee:"Piet",priority:"high",desc:"Compile all docs into portfolio."},
+      {id:"t6-4",title:"Reflective Essay (Individual)",phase:6,status:"todo",assignee:"All",priority:"high",desc:"Each member writes reflective essay."},
+      {id:"t6-5",title:"Team Evaluation",phase:6,status:"todo",assignee:"All",priority:"medium",desc:"Complete evaluation form per member."},
+      {id:"t6-6",title:"Final Sponsor Handover",phase:6,status:"todo",assignee:"Tan",priority:"high",desc:"Walk Levi through features, hand over credentials, codebase access, future roadmap."},
+    ],
+    documents:[{id:"d6-1",name:"Final Presentation Deck",status:"not-started"},{id:"d6-2",name:"Demo Script & Fallback",status:"not-started"},{id:"d6-3",name:"IT Showcase Poster",status:"not-started"},{id:"d6-4",name:"Final Documentation Portfolio",status:"not-started"},{id:"d6-5",name:"Reflective Essays",status:"not-started"},{id:"d6-6",name:"Team Evaluation Forms",status:"not-started"},{id:"d6-7",name:"Sponsor Handover Doc",status:"not-started"},{id:"d6-8",name:"Future Development Roadmap",status:"not-started"}]
+  }
+];
+const TEAM=[{id:"Tan",name:"Tan",role:"Project Manager",color:"#6C5CE7"},{id:"Tristan",name:"Tristan",role:"Developer",color:"#00B894"},{id:"Taddy",name:"Taddy",role:"Soft Skills",color:"#FDCB6E"},{id:"Piet",name:"Piet",role:"Business Analyst",color:"#E17055"}];
+const MS=[{date:"2025-05-09",title:"Milestone 1",desc:"Charter, requirements, methodology, architecture"},{date:"2025-06-20",title:"Sem 1 Deliverable",desc:"Working backend + admin dashboard"},{date:"2025-08-01",title:"System Demo",desc:"Consumer app demo"},{date:"2025-08-22",title:"Code Week",desc:"Complete codebase"},{date:"2025-10-03",title:"Final Presentations",desc:"Present to examiners"},{date:"2025-10-10",title:"IT Showcase",desc:"Exhibition and demo"},{date:"2025-10-17",title:"Final Documentation",desc:"Portfolio submission"},{date:"2025-10-24",title:"Reflective Essay",desc:"Individual submissions"}];
+const SK="sbr-pm-v4";
+function ld(){return null}
+function sv(d){}
+function defs(){return{tasks:PHASES_DATA.flatMap(p=>p.tasks),documents:PHASES_DATA.flatMap(p=>p.documents.map(d=>({...d,phase:p.num}))),meetings:[],activity:[],v:4}}
+
+const inp={background:"#0e0e11",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,padding:"10px 14px",color:"#e8e6e1",fontSize:13,fontFamily:"inherit",outline:"none",width:"100%",boxSizing:"border-box"};
+const btn={background:"linear-gradient(135deg,#00B894,#00a884)",border:"none",borderRadius:8,padding:"10px 16px",color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"};
+const ghost={background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.08)",borderRadius:8,padding:"8px 14px",color:"#888",fontSize:12,cursor:"pointer",fontFamily:"inherit"};
+
+const I=({n,s:sz=16,c="currentColor"})=>{const st={width:sz,height:sz,fill:"none",stroke:c,strokeWidth:1.8,strokeLinecap:"round",strokeLinejoin:"round",flexShrink:0};const d={home:<><path d="M3 9.5L8 4.5L13 9.5"/><path d="M5 8.5V13.5H11V8.5"/></>,kanban:<><rect x="2" y="3" width="4" height="10" rx="1"/><rect x="8" y="3" width="4" height="7" rx="1"/></>,cal:<><rect x="3" y="4" width="10" height="9" rx="1.5"/><path d="M3 7H13"/><path d="M6 2.5V5"/><path d="M10 2.5V5"/></>,users:<><circle cx="6" cy="5" r="2.5"/><path d="M2 13c0-2.2 1.8-4 4-4s4 1.8 4 4"/><circle cx="11" cy="6" r="1.8"/><path d="M11 9.5c1.7 0 3 1.3 3 3"/></>,doc:<><path d="M4 2h5.5L13 5.5V14a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M9.5 2v4H13"/></>,clock:<><circle cx="8" cy="8" r="5.5"/><path d="M8 5V8L10 10"/></>,plus:<><path d="M8 4V12"/><path d="M4 8H12"/></>,check:<><path d="M4 8L7 11L12 5"/></>,x:<><path d="M5 5L11 11"/><path d="M11 5L5 11"/></>,chev:<><path d="M6 4L10 8L6 12"/></>,alert:<><path d="M8 5V8.5"/><circle cx="8" cy="11" r=".5" fill={c}/></>,search:<><circle cx="7" cy="7" r="4"/><path d="M10 10L13 13"/></>,phase:<><rect x="3" y="3" width="10" height="10" rx="2"/><path d="M6 7L7.5 8.5L10 6"/></>,trash:<><path d="M5 4H11"/><path d="M5.5 4V12.5A.5.5 0 006 13H10a.5.5 0 00.5-.5V4"/><path d="M6.5 3V2.5A.5.5 0 017 2H9a.5.5 0 01.5.5V3"/></>,meet:<><rect x="2" y="5" width="12" height="8" rx="1.5"/><path d="M5 5V3.5A1.5 1.5 0 016.5 2h3A1.5 1.5 0 0111 3.5V5"/><path d="M8 8V10"/><path d="M2 8.5H14"/></>,logout:<><path d="M6 13H4a1 1 0 01-1-1V4a1 1 0 011-1h2"/><path d="M10 11L13 8L10 5"/><path d="M13 8H6"/></>};return<svg viewBox="0 0 16 16" style={st}>{d[n]}</svg>};
+const Av=({id,sz=22})=>{const m=TEAM.find(t=>t.id===id);return<div style={{width:sz,height:sz,borderRadius:"50%",background:m?.color||"#444",display:"flex",alignItems:"center",justifyContent:"center",fontSize:sz*.4,fontWeight:700,color:"#fff",flexShrink:0}}>{(m?.name||id||"?")[0]}</div>};
+const Overlay=({children,onClose})=><div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100}}><div onClick={e=>e.stopPropagation()} style={{background:"#18181c",border:"1px solid rgba(255,255,255,0.1)",borderRadius:16,width:480,maxHeight:"85vh",overflowY:"auto"}}>{children}</div></div>;
+
+// ─── MEETING FORM (own state!) ───
+function MeetingForm({onSave,onClose,init}){
+  const[t,sT]=useState(init?.title||"");const[d,sD]=useState(init?.date||"");const[tm,sTm]=useState(init?.time||"");const[at,sAt]=useState(init?.attendees||[]);const[nt,sNt]=useState(init?.notes||"");
+  const tog=(id)=>sAt(a=>a.includes(id)?a.filter(x=>x!==id):[...a,id]);
+  const ok=t.trim()&&d;
+  return<Overlay onClose={onClose}><div style={{padding:"24px 24px 8px"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}><div style={{fontSize:17,fontWeight:700}}>{init?"Edit meeting":"New meeting"}</div><button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",padding:4}}><I n="x" s={16} c="#666"/></button></div>
+    <div style={{display:"grid",gap:14}}>
+      <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Title *</label><input value={t} onChange={e=>sT(e.target.value)} placeholder="e.g. Sprint Review" style={inp} autoFocus/></div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Date *</label><input type="date" value={d} onChange={e=>sD(e.target.value)} style={inp}/></div>
+        <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Time</label><input type="time" value={tm} onChange={e=>sTm(e.target.value)} style={inp}/></div>
+      </div>
+      <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:8}}>Attendees</label>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{TEAM.map(m=>{const on=at.includes(m.id);return<button key={m.id} onClick={()=>tog(m.id)} style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",borderRadius:20,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:500,background:on?`${m.color}20`:"rgba(255,255,255,0.04)",border:on?`1.5px solid ${m.color}`:"1.5px solid rgba(255,255,255,0.08)",color:on?m.color:"#888",transition:"all .15s"}}><Av id={m.id} sz={18}/>{m.name}</button>})}</div>
+      </div>
+      <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Notes</label><textarea value={nt} onChange={e=>sNt(e.target.value)} rows={3} placeholder="Agenda, links..." style={{...inp,resize:"vertical"}}/></div>
+    </div>
+  </div>
+  <div style={{padding:"16px 24px 24px",display:"flex",gap:10,justifyContent:"flex-end"}}>
+    <button onClick={onClose} style={ghost}>Cancel</button>
+    <button onClick={()=>{if(ok)onSave({title:t.trim(),date:d,time:tm,attendees:at,notes:nt})}} style={{...btn,opacity:ok?1:.4,pointerEvents:ok?"auto":"none"}}>{init?"Save":"Schedule meeting"}</button>
+  </div></Overlay>
+}
+
+// ─── TASK DETAIL (own state!) ───
+function TaskDetail({task,onClose,onUpdate,onAct}){
+  const[st,sSt]=useState(task.status);const[as,sAs]=useState(task.assignee);const[pr,sPr]=useState(task.priority);
+  const ph=PHASES_DATA.find(p=>p.num===task.phase);const ch=st!==task.status||as!==task.assignee||pr!==task.priority;
+  const go=()=>{const u={};if(st!==task.status){u.status=st;onAct("status",`moved "${task.title}" to ${st}`)}if(as!==task.assignee){u.assignee=as;onAct("task",`reassigned "${task.title}" to ${as}`)}if(pr!==task.priority){u.priority=pr;onAct("task",`set "${task.title}" to ${pr} priority`)}if(Object.keys(u).length)onUpdate(task.id,u);onClose()};
+  const sts=["todo","in-progress","done"],prs=["low","medium","high"];
+  const sc={"todo":"#555","in-progress":"#FDCB6E","done":"#00B894"};const sl={"todo":"To do","in-progress":"In progress","done":"Done"};const pc={low:"#555",medium:"#FDCB6E",high:"#E74C3C"};
+  return<Overlay onClose={onClose}><div style={{padding:"24px 24px 8px"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
+      <div><span style={{fontSize:10,padding:"2px 7px",borderRadius:4,background:`${ph?.color}20`,color:ph?.color,fontWeight:700}}>Phase {task.phase}</span><div style={{fontSize:17,fontWeight:700,lineHeight:1.3,marginTop:8}}>{task.title}</div></div>
+      <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",padding:4,flexShrink:0}}><I n="x" s={16} c="#666"/></button>
+    </div>
+    <div style={{fontSize:13,color:"#999",lineHeight:1.7,marginBottom:20,padding:"12px 14px",background:"rgba(255,255,255,0.02)",borderRadius:10,border:"1px solid rgba(255,255,255,0.04)"}}>{task.desc}</div>
+    <div style={{display:"grid",gap:16}}>
+      <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:8}}>Status</label>
+        <div style={{display:"flex",gap:8}}>{sts.map(s=><button key={s} onClick={()=>sSt(s)} style={{flex:1,padding:8,borderRadius:8,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600,textAlign:"center",background:st===s?`${sc[s]}20`:"rgba(255,255,255,0.03)",border:st===s?`1.5px solid ${sc[s]}`:"1.5px solid rgba(255,255,255,0.06)",color:st===s?sc[s]:"#555",transition:"all .15s"}}>{sl[s]}</button>)}</div>
+      </div>
+      <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:8}}>Assignee</label>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{[...TEAM.map(m=>m.id),"All"].map(id=><button key={id} onClick={()=>sAs(id)} style={{display:"flex",alignItems:"center",gap:6,padding:"6px 12px",borderRadius:20,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:500,background:as===id?`${TEAM.find(t=>t.id===id)?.color||"#666"}20`:"rgba(255,255,255,0.03)",border:as===id?`1.5px solid ${TEAM.find(t=>t.id===id)?.color||"#666"}`:"1.5px solid rgba(255,255,255,0.06)",color:as===id?(TEAM.find(t=>t.id===id)?.color||"#ccc"):"#555",transition:"all .15s"}}>{id!=="All"&&<Av id={id} sz={16}/>}{id}</button>)}</div>
+      </div>
+      <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:8}}>Priority</label>
+        <div style={{display:"flex",gap:8}}>{prs.map(p=><button key={p} onClick={()=>sPr(p)} style={{flex:1,padding:8,borderRadius:8,cursor:"pointer",fontFamily:"inherit",fontSize:12,fontWeight:600,textTransform:"capitalize",textAlign:"center",background:pr===p?`${pc[p]}20`:"rgba(255,255,255,0.03)",border:pr===p?`1.5px solid ${pc[p]}`:"1.5px solid rgba(255,255,255,0.06)",color:pr===p?pc[p]:"#555",transition:"all .15s"}}>{p}</button>)}</div>
+      </div>
+    </div>
+  </div>
+  <div style={{padding:"16px 24px 24px",display:"flex",gap:10,justifyContent:"flex-end"}}><button onClick={onClose} style={ghost}>Cancel</button><button onClick={go} style={{...btn,opacity:ch?1:.5}}>{ch?"Save changes":"Close"}</button></div></Overlay>
+}
+
+// ─── ADD TASK (own state!) ───
+function AddTask({onSave,onClose}){
+  const[t,sT]=useState("");const[d,sD]=useState("");const[p,sP]=useState(1);const[a,sA]=useState("Tan");const[pr,sPr]=useState("medium");const ok=t.trim();
+  return<Overlay onClose={onClose}><div style={{padding:"24px 24px 8px"}}>
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}><div style={{fontSize:17,fontWeight:700}}>Add task</div><button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",padding:4}}><I n="x" s={16} c="#666"/></button></div>
+    <div style={{display:"grid",gap:14}}>
+      <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Title *</label><input value={t} onChange={e=>sT(e.target.value)} placeholder="Task title" style={inp} autoFocus/></div>
+      <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Description</label><textarea value={d} onChange={e=>sD(e.target.value)} rows={2} placeholder="What needs to be done?" style={{...inp,resize:"vertical"}}/></div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}>
+        <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Phase</label><select value={p} onChange={e=>sP(Number(e.target.value))} style={{...inp,cursor:"pointer"}}>{PHASES_DATA.map(ph=><option key={ph.num} value={ph.num}>Phase {ph.num}</option>)}</select></div>
+        <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Assignee</label><select value={a} onChange={e=>sA(e.target.value)} style={{...inp,cursor:"pointer"}}>{TEAM.map(m=><option key={m.id} value={m.id}>{m.name}</option>)}<option value="All">All</option></select></div>
+        <div><label style={{fontSize:11,color:"#888",display:"block",marginBottom:5}}>Priority</label><select value={pr} onChange={e=>sPr(e.target.value)} style={{...inp,cursor:"pointer"}}><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select></div>
+      </div>
+    </div>
+  </div>
+  <div style={{padding:"16px 24px 24px",display:"flex",gap:10,justifyContent:"flex-end"}}><button onClick={onClose} style={ghost}>Cancel</button><button onClick={()=>{if(ok)onSave({id:"c-"+Date.now(),title:t.trim(),desc:d,phase:p,assignee:a,priority:pr,status:"todo"})}} style={{...btn,opacity:ok?1:.4,pointerEvents:ok?"auto":"none"}}>Add task</button></div></Overlay>
+}
+
+function Confirm({title,msg,onOk,onClose,danger}){
+  return<Overlay onClose={onClose}><div style={{padding:24}}><div style={{fontSize:17,fontWeight:700,marginBottom:8}}>{title}</div><div style={{fontSize:13,color:"#888",lineHeight:1.6,marginBottom:20}}>{msg}</div><div style={{display:"flex",gap:10,justifyContent:"flex-end"}}><button onClick={onClose} style={ghost}>Cancel</button><button onClick={onOk} style={{...btn,background:danger?"linear-gradient(135deg,#E74C3C,#c0392b)":btn.background}}>{danger?"Delete":"Confirm"}</button></div></div></Overlay>
+}
+
+// ─── TASK ROW ───
+function TR({task,onClick}){const ph=PHASES_DATA.find(p=>p.num===task.phase);return<div onClick={onClick} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"#111114",borderRadius:10,marginBottom:4,border:"1px solid rgba(255,255,255,0.06)",cursor:"pointer",transition:"all .1s"}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}>
+  <div style={{width:18,height:18,borderRadius:5,border:`2px solid ${task.status==="done"?"#00B894":task.status==="in-progress"?"#FDCB6E":"#444"}`,background:task.status==="done"?"#00B894":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{task.status==="done"&&<I n="check" s={10} c="#fff"/>}{task.status==="in-progress"&&<div style={{width:6,height:6,borderRadius:1.5,background:"#FDCB6E"}}/>}</div>
+  <div style={{flex:1,minWidth:0}}><div style={{fontSize:13,fontWeight:500,opacity:task.status==="done"?.4:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{task.title}</div></div>
+  <span style={{fontSize:9,padding:"2px 6px",borderRadius:4,background:`${ph?.color}18`,color:ph?.color,fontWeight:600}}>P{task.phase}</span>
+  {task.priority==="high"&&<span style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(231,76,60,0.12)",color:"#E74C3C",fontWeight:600}}>HIGH</span>}
+  <Av id={task.assignee} sz={20}/>
+</div>}
+
+// ─── MAIN ───
+function App(){
+  const[user,setUser]=useState(null);const[data,setData]=useState(null);const[view,setView]=useState("dashboard");const[loading,setLoading]=useState(true);const[sp,setSp]=useState(null);const[modal,setModal]=useState(null);const[search,setSearch]=useState("");const sr=useRef(null);
+  useEffect(()=>{if(window._fbRef){firebase.database().ref(window._fbRef).on("value",snap=>{const val=snap.val();setData(val||defs());setLoading(false)});return()=>firebase.database().ref(window._fbRef).off();}else{try{const r=localStorage.getItem("sbr-pm-v4");setData(r?JSON.parse(r):defs())}catch(e){setData(defs())}setLoading(false)}},[]);
+  useEffect(()=>{if(!data)return;clearTimeout(sr.current);sr.current=setTimeout(()=>{if(window._fbRef){firebase.database().ref(window._fbRef).set(data)}else{try{localStorage.setItem("sbr-pm-v4",JSON.stringify(data))}catch(e){}}},500)},[data]);
+  const act=useCallback((a,d)=>{if(!user)return;setData(p=>({...p,activity:[{id:Date.now().toString(),user:user.id,action:a,detail:d,time:new Date().toISOString()},...(p.activity||[])].slice(0,100)}))},[user]);
+  const uT=useCallback((id,u)=>setData(p=>({...p,tasks:p.tasks.map(t=>t.id===id?{...t,...u}:t)})),[]);
+  const uD=useCallback((id,u)=>setData(p=>({...p,documents:p.documents.map(d=>d.id===id?{...d,...u}:d)})),[]);
+
+  if(loading)return<div style={{height:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#0a0a0c",color:"#555",fontFamily:"'Plus Jakarta Sans',sans-serif"}}>Loading...</div>;
+  if(!user)return<div style={{height:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#0a0a0c",fontFamily:"'Plus Jakarta Sans',sans-serif"}}><div style={{width:360,textAlign:"center"}}><div style={{fontSize:28,fontWeight:800,color:"#00B894",marginBottom:4,letterSpacing:"-0.03em"}}>SchoolBoyRugga</div><div style={{fontSize:13,color:"#555",marginBottom:32}}>Project Management Hub</div><div style={{display:"grid",gap:10}}>{TEAM.map(m=><button key={m.id} onClick={()=>setUser(m)} style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px",background:"#111114",border:"1px solid rgba(255,255,255,0.06)",borderRadius:12,cursor:"pointer",transition:"all .15s",color:"#e8e6e1",fontFamily:"inherit",textAlign:"left"}} onMouseEnter={e=>e.currentTarget.style.borderColor=m.color} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}><Av id={m.id} sz={36}/><div><div style={{fontSize:14,fontWeight:600}}>{m.name}</div><div style={{fontSize:11,color:"#888"}}>{m.role}</div></div></button>)}</div></div></div>;
+  if(!data)return null;
+
+  const nav=[{id:"dashboard",label:"My Day",icon:"home"},{id:"phases",label:"Phases",icon:"phase"},{id:"kanban",label:"Kanban",icon:"kanban"},{id:"calendar",label:"Calendar",icon:"cal"},{id:"team",label:"Team",icon:"users"},{id:"documents",label:"Documents",icon:"doc"},{id:"meetings",label:"Meetings",icon:"meet"},{id:"activity",label:"Activity",icon:"clock"}];
+  const dsC={"not-started":"#555","in-progress":"#FDCB6E","review":"#0984E3","complete":"#00B894"};
+  const dsL={"not-started":"Not started","in-progress":"In progress","review":"In review","complete":"Complete"};
+  const openTask=(t)=>setModal({type:"task",task:t});
+  const addNewTask=(t)=>{setData(p=>({...p,tasks:[...p.tasks,t]}));act("task",`created "${t.title}"`);setModal(null)};
+  const addMtg=(m)=>{setData(p=>({...p,meetings:[...(p.meetings||[]),{id:Date.now().toString(),...m,createdBy:user.id}]}));act("meeting",`scheduled "${m.title}"`);setModal(null)};
+  const delMtg=(id)=>{const m=(data.meetings||[]).find(x=>x.id===id);setData(p=>({...p,meetings:p.meetings.filter(x=>x.id!==id)}));act("meeting",`deleted "${m?.title}"`);setModal(null)};
+
+  // ─── VIEWS ───
+  const dashView=()=>{
+    const my=data.tasks.filter(t=>t.assignee===user.id||t.assignee==="All");const dn=my.filter(t=>t.status==="done").length;const pc=my.length?Math.round((dn/my.length)*100):0;
+    const high=my.filter(t=>t.status!=="done"&&t.priority==="high");const ip=my.filter(t=>t.status==="in-progress");
+    const ap=PHASES_DATA.find(p=>p.tasks.some(pt=>data.tasks.find(t=>t.id===pt.id&&t.status!=="done")))||PHASES_DATA[0];
+    const hr=new Date().getHours();
+    return<div style={{padding:"28px 32px",maxWidth:900}}>
+      <div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Good {hr<12?"morning":hr<18?"afternoon":"evening"}, {user.name}</div>
+      <div style={{fontSize:13,color:"#888",marginTop:4,marginBottom:24}}>Here's your project overview</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:24}}>
+        {[{l:"My tasks",v:my.length,c:"#6C5CE7"},{l:"In progress",v:ip.length,c:"#FDCB6E"},{l:"Completed",v:dn,c:"#00B894"},{l:"Completion",v:`${pc}%`,c:"#0984E3"}].map((s,i)=><div key={i} style={{background:"#111114",borderRadius:12,padding:"16px 18px",border:"1px solid rgba(255,255,255,0.05)"}}><div style={{fontSize:10,color:"#555",textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:8}}>{s.l}</div><div style={{fontSize:26,fontWeight:700,color:s.c}}>{s.v}</div></div>)}
+      </div>
+      <div onClick={()=>{setView("phases");setSp(ap.num)}} style={{background:`linear-gradient(135deg,${ap.color}12,${ap.color}06)`,border:`1px solid ${ap.color}30`,borderRadius:14,padding:"16px 20px",marginBottom:24,cursor:"pointer"}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}><div style={{width:8,height:8,borderRadius:"50%",background:ap.color}}/><span style={{fontSize:10,color:ap.color,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.06em"}}>Active phase</span></div>
+        <div style={{fontSize:16,fontWeight:700}}>Phase {ap.num}: {ap.title}</div><div style={{fontSize:12,color:"#888",marginTop:3}}>{ap.timeline}</div>
+      </div>
+      {high.length>0&&<div style={{marginBottom:24}}><div style={{fontSize:13,fontWeight:600,color:"#E74C3C",marginBottom:8,display:"flex",alignItems:"center",gap:6}}><I n="alert" s={13} c="#E74C3C"/>High priority ({high.length})</div>{high.slice(0,5).map(t=><TR key={t.id} task={t} onClick={()=>openTask(t)}/>)}</div>}
+      {ip.length>0&&<div style={{marginBottom:24}}><div style={{fontSize:13,fontWeight:600,color:"#FDCB6E",marginBottom:8}}>In progress ({ip.length})</div>{ip.map(t=><TR key={t.id} task={t} onClick={()=>openTask(t)}/>)}</div>}
+      <div style={{fontSize:13,fontWeight:600,color:"#888",marginBottom:10}}>Upcoming milestones</div>
+      {MS.slice(0,4).map((m,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,0.03)"}}><div style={{width:40,textAlign:"center"}}><div style={{fontSize:10,color:"#888",textTransform:"uppercase"}}>{new Date(m.date).toLocaleDateString("en",{month:"short"})}</div><div style={{fontSize:18,fontWeight:700}}>{new Date(m.date).getDate()}</div></div><div><div style={{fontSize:13,fontWeight:600}}>{m.title}</div><div style={{fontSize:11,color:"#555"}}>{m.desc}</div></div></div>)}
+    </div>;
+  };
+
+  const phasesView=()=>{
+    if(!sp){return<div style={{padding:"28px 32px"}}><div style={{fontSize:22,fontWeight:700,marginBottom:4,letterSpacing:"-0.02em"}}>Project phases</div><div style={{fontSize:13,color:"#888",marginBottom:24}}>6 phases — May to October 2025</div>
+      {PHASES_DATA.map(p=>{const ts=data.tasks.filter(t=>t.phase===p.num),dn=ts.filter(t=>t.status==="done").length,pc=ts.length?Math.round((dn/ts.length)*100):0;const ds=data.documents.filter(d=>d.phase===p.num),dd=ds.filter(d=>d.status==="complete").length;
+        return<div key={p.id} onClick={()=>setSp(p.num)} style={{background:"#111114",borderRadius:14,padding:20,marginBottom:10,border:`1px solid ${p.color}18`,cursor:"pointer",transition:"all .15s"}} onMouseEnter={e=>e.currentTarget.style.borderColor=`${p.color}40`} onMouseLeave={e=>e.currentTarget.style.borderColor=`${p.color}18`}>
+          <div style={{display:"flex",justifyContent:"space-between"}}><div><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}><div style={{width:24,height:24,borderRadius:6,background:`${p.color}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800,color:p.color}}>{p.num}</div><div style={{fontSize:15,fontWeight:700}}>{p.title}</div></div><div style={{fontSize:11,color:"#888"}}>{p.timeline}</div><div style={{fontSize:11,color:"#555",marginTop:1}}>{p.milestone}</div></div>
+          <div style={{textAlign:"right"}}><div style={{fontSize:22,fontWeight:700,color:p.color}}>{pc}%</div><div style={{fontSize:10,color:"#555"}}>{dn}/{ts.length} tasks · {dd}/{ds.length} docs</div></div></div>
+          <div style={{marginTop:12,height:4,background:"rgba(255,255,255,0.05)",borderRadius:2}}><div style={{height:"100%",width:`${pc}%`,background:p.color,borderRadius:2,transition:"width .3s"}}/></div>
+        </div>})}</div>}
+    const ph=PHASES_DATA.find(p=>p.num===sp);if(!ph)return null;
+    const ts=data.tasks.filter(t=>t.phase===ph.num),docs=data.documents.filter(d=>d.phase===ph.num),dn=ts.filter(t=>t.status==="done").length,pc=ts.length?Math.round((dn/ts.length)*100):0;
+    return<div style={{padding:"28px 32px",maxWidth:900}}>
+      <button onClick={()=>setSp(null)} style={{background:"none",border:"none",color:"#888",cursor:"pointer",fontSize:12,marginBottom:16,fontFamily:"inherit",padding:0,display:"flex",alignItems:"center",gap:4}}><span style={{transform:"rotate(180deg)",display:"inline-block"}}><I n="chev" s={12} c="#888"/></span>All phases</button>
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:4}}><div style={{width:32,height:32,borderRadius:8,background:`${ph.color}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:800,color:ph.color}}>{ph.num}</div><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>{ph.title}</div></div>
+      <div style={{fontSize:12,color:"#888",marginLeft:44}}>{ph.timeline}</div><div style={{fontSize:12,color:"#555",marginLeft:44,marginBottom:16}}>{ph.milestone}</div>
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:28,marginLeft:44}}><div style={{flex:1,height:6,background:"rgba(255,255,255,0.05)",borderRadius:3}}><div style={{height:"100%",width:`${pc}%`,background:ph.color,borderRadius:3,transition:"width .3s"}}/></div><span style={{fontSize:13,fontWeight:700,color:ph.color}}>{pc}%</span></div>
+      <div style={{fontSize:14,fontWeight:700,marginBottom:10}}>Tasks ({ts.length})</div>
+      {ts.map(t=><TR key={t.id} task={t} onClick={()=>openTask(t)}/>)}
+      <div style={{fontSize:14,fontWeight:700,marginTop:28,marginBottom:10}}>Documents ({docs.length})</div>
+      {docs.map(d=><div key={d.id} onClick={()=>{const nx=d.status==="not-started"?"in-progress":d.status==="in-progress"?"review":d.status==="review"?"complete":"not-started";uD(d.id,{status:nx});act("document",`updated "${d.name}" to ${nx}`)}} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"#111114",borderRadius:10,marginBottom:4,border:"1px solid rgba(255,255,255,0.06)",cursor:"pointer",transition:"all .1s"}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}><I n="doc" s={14} c={dsC[d.status]}/><div style={{flex:1,fontSize:12}}>{d.name}</div><span style={{fontSize:9,padding:"3px 8px",borderRadius:5,background:`${dsC[d.status]}18`,color:dsC[d.status],fontWeight:600}}>{dsL[d.status]}</span></div>)}
+    </div>;
+  };
+
+  const kanbanView=()=>{
+    const[dragId,setDragId]=useState(null);const[dragOver,setDragOver]=useState(null);
+    const cols=[{id:"todo",label:"To do",c:"#555"},{id:"in-progress",label:"In progress",c:"#FDCB6E"},{id:"done",label:"Done",c:"#00B894"}];
+    const ft=data.tasks.filter(t=>{if(!search)return true;const q=search.toLowerCase();return t.title.toLowerCase().includes(q)||t.assignee?.toLowerCase().includes(q)});
+    const drop=(cid)=>{if(!dragId)return;const t=data.tasks.find(x=>x.id===dragId);if(t&&t.status!==cid){uT(dragId,{status:cid});act("status",`moved "${t.title}" to ${cid}`)}setDragId(null);setDragOver(null)};
+    return<div style={{padding:"28px 32px",height:"100%",display:"flex",flexDirection:"column"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexShrink:0}}>
+        <div><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Kanban board</div><div style={{fontSize:13,color:"#888",marginTop:2}}>Drag tasks between columns · Click to edit</div></div>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <div style={{position:"relative"}}><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..." style={{...inp,width:180,paddingLeft:32}}/><div style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)"}}><I n="search" s={13} c="#555"/></div></div>
+          <button onClick={()=>setModal({type:"add"})} style={{...btn,display:"flex",alignItems:"center",gap:6,padding:"9px 14px"}}><I n="plus" s={14} c="#fff"/>Add task</button>
+        </div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,flex:1,minHeight:0}}>
+        {cols.map(col=>{const items=ft.filter(t=>t.status===col.id);return<div key={col.id} onDragOver={e=>{e.preventDefault();setDragOver(col.id)}} onDragLeave={()=>setDragOver(null)} onDrop={()=>drop(col.id)} style={{background:dragOver===col.id?"rgba(255,255,255,0.03)":"#0c0c0f",borderRadius:14,padding:12,border:dragOver===col.id?`1.5px dashed ${col.c}50`:"1px solid rgba(255,255,255,0.06)",overflowY:"auto",transition:"all .15s"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12,padding:"0 4px"}}><div style={{width:8,height:8,borderRadius:"50%",background:col.c}}/><div style={{fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.06em",color:"#888"}}>{col.label}</div><div style={{fontSize:11,color:"#555",marginLeft:"auto"}}>{items.length}</div></div>
+          {items.map(t=>{const ph=PHASES_DATA.find(p=>p.num===t.phase);return<div key={t.id} draggable onDragStart={()=>setDragId(t.id)} onDragEnd={()=>{setDragId(null);setDragOver(null)}} onClick={()=>openTask(t)} style={{background:dragId===t.id?"rgba(255,255,255,0.08)":"#111114",borderRadius:10,padding:"12px 14px",marginBottom:6,border:"1px solid rgba(255,255,255,0.06)",cursor:"grab",transition:"all .1s",opacity:dragId===t.id?.5:1}} onMouseEnter={e=>{if(dragId)return;e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"}} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}>
+            <div style={{fontSize:12,fontWeight:600,marginBottom:8,lineHeight:1.4}}>{t.title}</div>
+            <div style={{display:"flex",alignItems:"center",gap:5}}><span style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:`${ph?.color}15`,color:ph?.color,fontWeight:600}}>P{t.phase}</span>{t.priority==="high"&&<span style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(231,76,60,0.1)",color:"#E74C3C",fontWeight:600}}>HIGH</span>}<div style={{marginLeft:"auto"}}><Av id={t.assignee} sz={18}/></div></div>
+          </div>})}
+        </div>})}
+      </div>
+    </div>;
+  };
+
+  const calView=()=>{
+    const[off,setOff]=useState(0);const now=new Date(2025,4+off,1);const yr=now.getFullYear(),mo=now.getMonth(),dim=new Date(yr,mo+1,0).getDate(),sd=new Date(yr,mo,1).getDay();
+    const mM={},mtM={};MS.forEach(m=>{const d=new Date(m.date);if(d.getFullYear()===yr&&d.getMonth()===mo)mM[d.getDate()]=m});(data.meetings||[]).forEach(m=>{const d=new Date(m.date);if(d.getFullYear()===yr&&d.getMonth()===mo){const dy=d.getDate();if(!mtM[dy])mtM[dy]=[];mtM[dy].push(m)}});
+    const cells=[];for(let i=0;i<sd;i++)cells.push(null);for(let d=1;d<=dim;d++)cells.push(d);
+    return<div style={{padding:"28px 32px"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Calendar</div><button onClick={()=>setModal({type:"mtg"})} style={{...btn,display:"flex",alignItems:"center",gap:6,padding:"8px 14px",fontSize:12}}><I n="plus" s={13} c="#fff"/>Add meeting</button></div>
+      <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:16}}><button onClick={()=>setOff(p=>p-1)} style={ghost}>Prev</button><div style={{fontSize:16,fontWeight:700,minWidth:160,textAlign:"center"}}>{now.toLocaleDateString("en",{month:"long",year:"numeric"})}</div><button onClick={()=>setOff(p=>p+1)} style={ghost}>Next</button></div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
+        {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=><div key={d} style={{padding:8,textAlign:"center",fontSize:10,color:"#555",fontWeight:600,textTransform:"uppercase"}}>{d}</div>)}
+        {cells.map((d,i)=><div key={i} style={{minHeight:80,background:d?"#111114":"transparent",borderRadius:8,padding:d?"6px 8px":0,border:d?"1px solid rgba(255,255,255,0.03)":"none"}}>{d&&<><div style={{fontSize:12,fontWeight:500,color:"#888",marginBottom:4}}>{d}</div>{mM[d]&&<div style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(231,76,60,0.12)",color:"#E74C3C",fontWeight:600,marginBottom:3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{mM[d].title}</div>}{mtM[d]?.map((m,j)=><div key={j} style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(108,92,231,0.12)",color:"#6C5CE7",fontWeight:500,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.title}</div>)}</>}</div>)}
+      </div>
+      <div style={{marginTop:24}}><div style={{fontSize:13,fontWeight:600,color:"#888",marginBottom:10}}>Academic milestones</div>{MS.map((m,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.03)"}}><div style={{fontSize:11,color:"#E74C3C",fontWeight:600,minWidth:70}}>{new Date(m.date).toLocaleDateString("en",{day:"numeric",month:"short"})}</div><div style={{fontSize:12,fontWeight:500}}>{m.title}</div><div style={{fontSize:11,color:"#555"}}>{m.desc}</div></div>)}</div>
+    </div>;
+  };
+
+  const teamView=()=><div style={{padding:"28px 32px",maxWidth:800}}>
+    <div style={{fontSize:22,fontWeight:700,marginBottom:4,letterSpacing:"-0.02em"}}>Team workload</div><div style={{fontSize:13,color:"#888",marginBottom:24}}>Task distribution across phases</div>
+    {TEAM.map(m=>{const ts=data.tasks.filter(t=>t.assignee===m.id||t.assignee==="All");const dn=ts.filter(t=>t.status==="done").length,ip=ts.filter(t=>t.status==="in-progress").length,td=ts.filter(t=>t.status==="todo").length;const pc=ts.length?Math.round((dn/ts.length)*100):0;
+      return<div key={m.id} style={{background:"#111114",borderRadius:14,padding:20,marginBottom:10,border:"1px solid rgba(255,255,255,0.06)"}}>
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}><Av id={m.id} sz={40}/><div><div style={{fontSize:15,fontWeight:700}}>{m.name}</div><div style={{fontSize:11,color:"#888"}}>{m.role}</div></div><div style={{marginLeft:"auto",textAlign:"right"}}><div style={{fontSize:20,fontWeight:700,color:m.color}}>{pc}%</div><div style={{fontSize:10,color:"#555"}}>{dn}/{ts.length}</div></div></div>
+        <div style={{display:"flex",gap:8,marginBottom:10}}>{[["To do",td,"#555"],["In progress",ip,"#FDCB6E"],["Done",dn,"#00B894"]].map(([l,v,c])=><span key={l} style={{fontSize:10,padding:"3px 8px",borderRadius:5,background:`${c}12`,color:c}}>{l}: {v}</span>)}</div>
+        <div style={{height:5,background:"rgba(255,255,255,0.05)",borderRadius:3,overflow:"hidden",display:"flex"}}><div style={{width:`${ts.length?(dn/ts.length)*100:0}%`,background:"#00B894"}}/><div style={{width:`${ts.length?(ip/ts.length)*100:0}%`,background:"#FDCB6E"}}/></div>
+      </div>})}
+    <div style={{marginTop:28,fontSize:14,fontWeight:700,marginBottom:12}}>RACI matrix</div>
+    <div style={{background:"#111114",borderRadius:12,overflow:"hidden",border:"1px solid rgba(255,255,255,0.06)"}}>
+      <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",padding:"10px 14px",background:"rgba(255,255,255,0.03)",borderBottom:"1px solid rgba(255,255,255,0.06)"}}><div style={{fontSize:10,fontWeight:700,color:"#888",textTransform:"uppercase"}}>Phase</div>{TEAM.map(m=><div key={m.id} style={{fontSize:10,fontWeight:700,color:m.color,textTransform:"uppercase",textAlign:"center"}}>{m.name}</div>)}</div>
+      {[["P1: Foundation","A, R","C, R","R","A, R"],["P2: Backend","A","R","I","C"],["P3: Admin Dashboard","A","R","C","R"],["P4: Mobile App","A","R","C","C"],["P5: Testing & QA","A, R","R","R","R"],["P6: Final Deliverables","A, R","R","R","R"]].map((r,i)=><div key={i} style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 1fr",padding:"10px 14px",borderBottom:i<5?"1px solid rgba(255,255,255,0.03)":"none"}}><div style={{fontSize:12,fontWeight:500}}>{r[0]}</div>{r.slice(1).map((v,j)=><div key={j} style={{fontSize:11,color:"#888",textAlign:"center"}}>{v}</div>)}</div>)}
+    </div>
+  </div>;
+
+  const docsView=()=>{const all=data.documents,comp=all.filter(d=>d.status==="complete").length,pc=all.length?Math.round((comp/all.length)*100):0;
+    return<div style={{padding:"28px 32px",maxWidth:900}}>
+      <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",marginBottom:24}}><div><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Document hub</div><div style={{fontSize:13,color:"#888",marginTop:2}}>Click to cycle status · {all.length} documents</div></div><div style={{textAlign:"right"}}><div style={{fontSize:22,fontWeight:700,color:"#00B894"}}>{pc}%</div><div style={{fontSize:10,color:"#555"}}>{comp}/{all.length}</div></div></div>
+      {PHASES_DATA.map(ph=>{const ds=all.filter(d=>d.phase===ph.num);if(!ds.length)return null;return<div key={ph.id} style={{marginBottom:20}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><div style={{width:20,height:20,borderRadius:5,background:`${ph.color}20`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,fontWeight:800,color:ph.color}}>{ph.num}</div><div style={{fontSize:13,fontWeight:700}}>{ph.title}</div><div style={{fontSize:10,color:"#555",marginLeft:"auto"}}>{ds.filter(d=>d.status==="complete").length}/{ds.length}</div></div>
+        {ds.map(d=><div key={d.id} onClick={()=>{const nx=d.status==="not-started"?"in-progress":d.status==="in-progress"?"review":d.status==="review"?"complete":"not-started";uD(d.id,{status:nx});act("document",`updated "${d.name}" to ${nx}`)}} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"#111114",borderRadius:10,marginBottom:4,border:"1px solid rgba(255,255,255,0.06)",cursor:"pointer",transition:"all .1s"}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}><I n="doc" s={14} c={dsC[d.status]}/><div style={{flex:1,fontSize:12}}>{d.name}</div><span style={{fontSize:9,padding:"3px 8px",borderRadius:5,background:`${dsC[d.status]}18`,color:dsC[d.status],fontWeight:600}}>{dsL[d.status]}</span></div>)}
+      </div>})}
+    </div>;
+  };
+
+  const mtgView=()=>{const ms=data.meetings||[];const up=ms.filter(m=>new Date(m.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date));const past=ms.filter(m=>new Date(m.date)<new Date()).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const MCard=({m,past:p})=><div style={{background:"#111114",borderRadius:12,padding:16,marginBottom:8,border:"1px solid rgba(255,255,255,0.06)",opacity:p?.5:1}}>
+      <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between"}}><div><div style={{fontSize:14,fontWeight:600}}>{m.title}</div><div style={{fontSize:11,color:"#888",marginTop:4}}>{new Date(m.date).toLocaleDateString("en",{weekday:"short",day:"numeric",month:"short"})}{m.time&&` at ${m.time}`}</div></div><button onClick={()=>setModal({type:"del",id:m.id,name:m.title})} style={{background:"none",border:"none",cursor:"pointer",padding:4,opacity:.4}}><I n="trash" s={14} c="#E74C3C"/></button></div>
+      {m.attendees?.length>0&&<div style={{display:"flex",gap:4,marginTop:10}}>{m.attendees.map(a=><Av key={a} id={a} sz={22}/>)}</div>}
+      {m.notes&&<div style={{fontSize:11,color:"#555",marginTop:8,lineHeight:1.6}}>{m.notes}</div>}
+    </div>;
+    return<div style={{padding:"28px 32px",maxWidth:800}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:24}}><div><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Meetings</div><div style={{fontSize:13,color:"#888",marginTop:2}}>Schedule and track team meetings</div></div><button onClick={()=>setModal({type:"mtg"})} style={{...btn,display:"flex",alignItems:"center",gap:6}}><I n="plus" s={14} c="#fff"/>New meeting</button></div>
+      {up.length>0&&<div style={{fontSize:11,fontWeight:600,color:"#00B894",marginBottom:8,textTransform:"uppercase",letterSpacing:"0.06em"}}>Upcoming ({up.length})</div>}{up.map(m=><MCard key={m.id} m={m}/>)}
+      {past.length>0&&<div style={{fontSize:11,fontWeight:600,color:"#555",marginBottom:8,marginTop:20,textTransform:"uppercase",letterSpacing:"0.06em"}}>Past ({past.length})</div>}{past.map(m=><MCard key={m.id} m={m} past/>)}
+      {ms.length===0&&<div style={{textAlign:"center",padding:"60px 0",color:"#555"}}><div style={{fontSize:14,marginBottom:4}}>No meetings yet</div><div style={{fontSize:12}}>Click "New meeting" to schedule one</div></div>}
+    </div>;
+  };
+
+  const actView=()=>{const items=data.activity||[];return<div style={{padding:"28px 32px",maxWidth:700}}>
+    <div style={{fontSize:22,fontWeight:700,marginBottom:4,letterSpacing:"-0.02em"}}>Activity log</div><div style={{fontSize:13,color:"#888",marginBottom:24}}>Recent actions across the team</div>
+    {items.length===0&&<div style={{textAlign:"center",padding:"60px 0",color:"#555"}}><div style={{fontSize:14}}>No activity yet</div></div>}
+    {items.map(a=>{const m=TEAM.find(t=>t.id===a.user);const df=Date.now()-new Date(a.time).getTime(),mn=Math.floor(df/60000);const ago=mn<1?"just now":mn<60?`${mn}m ago`:mn<1440?`${Math.floor(mn/60)}h ago`:`${Math.floor(mn/1440)}d ago`;
+      return<div key={a.id} style={{display:"flex",gap:12,padding:"12px 0",borderBottom:"1px solid rgba(255,255,255,0.03)"}}><Av id={a.user} sz={28}/><div><div style={{fontSize:12}}><span style={{fontWeight:600}}>{m?.name||"?"}</span> <span style={{color:"#888"}}>{a.detail}</span></div><div style={{fontSize:10,color:"#555",marginTop:3}}>{ago}</div></div></div>})}
+  </div>};
+
+  return<div style={{display:"flex",height:"100vh",background:"#0a0a0c",fontFamily:"'Plus Jakarta Sans',sans-serif",color:"#e8e6e1"}}>
+    <div style={{width:220,background:"#111114",borderRight:"1px solid rgba(255,255,255,0.06)",display:"flex",flexDirection:"column",flexShrink:0}}>
+      <div style={{padding:"20px 16px 12px",borderBottom:"1px solid rgba(255,255,255,0.06)"}}><div style={{fontSize:15,fontWeight:700,letterSpacing:"-0.02em",color:"#00B894"}}>SchoolBoyRugga</div><div style={{fontSize:11,color:"#555",marginTop:2}}>Project #29 — PM Hub</div></div>
+      <div style={{flex:1,padding:8,overflowY:"auto"}}>{nav.map(n=><button key={n.id} onClick={()=>{setView(n.id);setSp(null)}} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"9px 12px",border:"none",borderRadius:8,background:view===n.id?"rgba(255,255,255,0.07)":"transparent",color:view===n.id?"#fff":"#888",fontSize:13,fontWeight:view===n.id?600:400,cursor:"pointer",transition:"all .15s",textAlign:"left",fontFamily:"inherit"}}><I n={n.icon} s={15} c={view===n.id?"#00B894":"#555"}/>{n.label}</button>)}</div>
+      <div style={{padding:"8px",borderTop:"1px solid rgba(255,255,255,0.06)"}}>
+        <button onClick={()=>setModal({type:"reset"})} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"7px 12px",border:"none",borderRadius:6,background:"transparent",color:"#555",fontSize:11,cursor:"pointer",fontFamily:"inherit",textAlign:"left"}}>Reset data</button>
+        <button onClick={()=>setUser(null)} style={{display:"flex",alignItems:"center",gap:8,width:"100%",padding:"7px 12px",border:"none",borderRadius:6,background:"transparent",color:"#555",fontSize:11,cursor:"pointer",fontFamily:"inherit",textAlign:"left"}}><I n="logout" s={13} c="#555"/>Sign out ({user.name})</button>
+      </div>
+    </div>
+    <div style={{flex:1,overflowY:"auto"}}>
+      {view==="dashboard"&&dashView()}
+      {view==="phases"&&phasesView()}
+      {view==="kanban"&&kanbanView()}
+      {view==="calendar"&&calView()}
+      {view==="team"&&teamView()}
+      {view==="documents"&&docsView()}
+      {view==="meetings"&&mtgView()}
+      {view==="activity"&&actView()}
+    </div>
+    {modal?.type==="mtg"&&<MeetingForm onSave={addMtg} onClose={()=>setModal(null)} init={modal.init}/>}
+    {modal?.type==="task"&&<TaskDetail task={modal.task} onClose={()=>setModal(null)} onUpdate={uT} onAct={act}/>}
+    {modal?.type==="add"&&<AddTask onSave={addNewTask} onClose={()=>setModal(null)}/>}
+    {modal?.type==="reset"&&<Confirm title="Reset all data?" msg="This resets all task statuses, documents, meetings, and activity to defaults. Can't be undone." danger onOk={()=>{setData(defs());setModal(null)}} onClose={()=>setModal(null)}/>}
+    {modal?.type==="del"&&<Confirm title="Delete meeting?" msg={`Delete "${modal.name}"? This can't be undone.`} danger onOk={()=>delMtg(modal.id)} onClose={()=>setModal(null)}/>}
+  </div>;
+}
+
+
+
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
