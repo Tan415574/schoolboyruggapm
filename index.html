@@ -54,9 +54,6 @@
 -->
 
 <script>
-  // ═══════════════════════════════════════════════════════════
-  // PASTE YOUR FIREBASE CONFIG HERE (from Firebase Console)
-  // ═══════════════════════════════════════════════════════════
   const firebaseConfig = {
     apiKey: "AIzaSyBpeLgRvurJ3YvB7ffeH_NySNAU7MslOxM",
     authDomain: "schoolboyrugga-pm.firebaseapp.com",
@@ -66,16 +63,13 @@
     messagingSenderId: "462714658011",
     appId: "1:462714658011:web:0d07bbe49d5b5aeddf00fe"
   };
-  // ═══════════════════════════════════════════════════════════
 
-  // Initialize Firebase
   if (firebaseConfig.apiKey !== "YOUR_API_KEY_HERE") {
     firebase.initializeApp(firebaseConfig);
     window._fbRef = "pm-hub-data";
     console.log("Firebase connected!");
   } else {
-    // Fallback to localStorage if Firebase not configured yet
-    console.warn("Firebase not configured — using localStorage. Edit the firebaseConfig above.");
+    console.warn("Firebase not configured — using localStorage.");
     window._fbRef = null;
   }
 </script>
@@ -154,9 +148,7 @@ const PHASES_DATA = [
 ];
 const TEAM=[{id:"Tan",name:"Tan",role:"Project Manager",color:"#6C5CE7"},{id:"Tristan",name:"Tristan",role:"Developer",color:"#00B894"},{id:"Taddy",name:"Taddy",role:"Soft Skills",color:"#FDCB6E"},{id:"Piet",name:"Piet",role:"Business Analyst",color:"#E17055"}];
 const MS=[{date:"2025-05-09",title:"Milestone 1",desc:"Charter, requirements, methodology, architecture"},{date:"2025-06-20",title:"Sem 1 Deliverable",desc:"Working backend + admin dashboard"},{date:"2025-08-01",title:"System Demo",desc:"Consumer app demo"},{date:"2025-08-22",title:"Code Week",desc:"Complete codebase"},{date:"2025-10-03",title:"Final Presentations",desc:"Present to examiners"},{date:"2025-10-10",title:"IT Showcase",desc:"Exhibition and demo"},{date:"2025-10-17",title:"Final Documentation",desc:"Portfolio submission"},{date:"2025-10-24",title:"Reflective Essay",desc:"Individual submissions"}];
-const SK="sbr-pm-v4";
-function ld(){return null}
-function sv(d){}
+
 function defs(){return{tasks:PHASES_DATA.flatMap(p=>p.tasks),documents:PHASES_DATA.flatMap(p=>p.documents.map(d=>({...d,phase:p.num}))),meetings:[],activity:[],v:4}}
 
 const inp={background:"#0e0e11",border:"1px solid rgba(255,255,255,0.1)",borderRadius:8,padding:"10px 14px",color:"#e8e6e1",fontSize:13,fontFamily:"inherit",outline:"none",width:"100%",boxSizing:"border-box"};
@@ -167,7 +159,6 @@ const I=({n,s:sz=16,c="currentColor"})=>{const st={width:sz,height:sz,fill:"none
 const Av=({id,sz=22})=>{const m=TEAM.find(t=>t.id===id);return<div style={{width:sz,height:sz,borderRadius:"50%",background:m?.color||"#444",display:"flex",alignItems:"center",justifyContent:"center",fontSize:sz*.4,fontWeight:700,color:"#fff",flexShrink:0}}>{(m?.name||id||"?")[0]}</div>};
 const Overlay=({children,onClose})=><div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(8px)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:100}}><div onClick={e=>e.stopPropagation()} style={{background:"#18181c",border:"1px solid rgba(255,255,255,0.1)",borderRadius:16,width:480,maxHeight:"85vh",overflowY:"auto"}}>{children}</div></div>;
 
-// ─── MEETING FORM (own state!) ───
 function MeetingForm({onSave,onClose,init}){
   const[t,sT]=useState(init?.title||"");const[d,sD]=useState(init?.date||"");const[tm,sTm]=useState(init?.time||"");const[at,sAt]=useState(init?.attendees||[]);const[nt,sNt]=useState(init?.notes||"");
   const tog=(id)=>sAt(a=>a.includes(id)?a.filter(x=>x!==id):[...a,id]);
@@ -192,7 +183,6 @@ function MeetingForm({onSave,onClose,init}){
   </div></Overlay>
 }
 
-// ─── TASK DETAIL (own state!) ───
 function TaskDetail({task,onClose,onUpdate,onAct}){
   const[st,sSt]=useState(task.status);const[as,sAs]=useState(task.assignee);const[pr,sPr]=useState(task.priority);
   const ph=PHASES_DATA.find(p=>p.num===task.phase);const ch=st!==task.status||as!==task.assignee||pr!==task.priority;
@@ -220,7 +210,6 @@ function TaskDetail({task,onClose,onUpdate,onAct}){
   <div style={{padding:"16px 24px 24px",display:"flex",gap:10,justifyContent:"flex-end"}}><button onClick={onClose} style={ghost}>Cancel</button><button onClick={go} style={{...btn,opacity:ch?1:.5}}>{ch?"Save changes":"Close"}</button></div></Overlay>
 }
 
-// ─── ADD TASK (own state!) ───
 function AddTask({onSave,onClose}){
   const[t,sT]=useState("");const[d,sD]=useState("");const[p,sP]=useState(1);const[a,sA]=useState("Tan");const[pr,sPr]=useState("medium");const ok=t.trim();
   return<Overlay onClose={onClose}><div style={{padding:"24px 24px 8px"}}>
@@ -242,8 +231,6 @@ function Confirm({title,msg,onOk,onClose,danger}){
   return<Overlay onClose={onClose}><div style={{padding:24}}><div style={{fontSize:17,fontWeight:700,marginBottom:8}}>{title}</div><div style={{fontSize:13,color:"#888",lineHeight:1.6,marginBottom:20}}>{msg}</div><div style={{display:"flex",gap:10,justifyContent:"flex-end"}}><button onClick={onClose} style={ghost}>Cancel</button><button onClick={onOk} style={{...btn,background:danger?"linear-gradient(135deg,#E74C3C,#c0392b)":btn.background}}>{danger?"Delete":"Confirm"}</button></div></div></Overlay>
 }
 
-
-// ─── DOC SUBMIT MODAL ───
 function DocSubmit({doc,onSave,onClose}){
   const[link,sL]=useState("");const[note,sN]=useState("");
   const ok=link.trim();
@@ -264,13 +251,12 @@ function DocSubmit({doc,onSave,onClose}){
   </div></Overlay>
 }
 
-// ─── DOC DETAIL MODAL ───
 function DocDetailModal({doc,user,onApprove,onReject,onResubmit,onClose}){
   const sub=doc.submission;
   const ph=PHASES_DATA.find(p=>p.num===doc.phase);
   const dsC={"not-started":"#555","in-progress":"#FDCB6E","review":"#0984E3","complete":"#00B894","changes-requested":"#E74C3C"};
   const dsL={"not-started":"Not started","in-progress":"In progress","review":"In review","complete":"Approved","changes-requested":"Changes requested"};
-  const alreadyVoted=sub?.approvals?.includes(user.id)||sub?.rejections?.includes(user.id);
+  const alreadyVoted=sub?.approvals?.includes(user.id)||sub?.rejections?.some(r=>r.by===user.id);
   const isSubmitter=sub?.submittedBy===user.id;
   return<Overlay onClose={onClose}><div style={{padding:"24px 24px 8px"}}>
     <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16}}>
@@ -314,7 +300,6 @@ function DocDetailModal({doc,user,onApprove,onReject,onResubmit,onClose}){
   </div></Overlay>
 }
 
-// ─── REJECT REASON MODAL ───
 function RejectReason({doc,onSave,onClose}){
   const[r,sR]=useState("");
   return<Overlay onClose={onClose}><div style={{padding:24}}>
@@ -325,7 +310,6 @@ function RejectReason({doc,onSave,onClose}){
   </div></Overlay>
 }
 
-// ─── TASK ROW ───
 function TR({task,onClick}){const ph=PHASES_DATA.find(p=>p.num===task.phase);return<div onClick={onClick} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:"#111114",borderRadius:10,marginBottom:4,border:"1px solid rgba(255,255,255,0.06)",cursor:"pointer",transition:"all .1s"}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}>
   <div style={{width:18,height:18,borderRadius:5,border:`2px solid ${task.status==="done"?"#00B894":task.status==="in-progress"?"#FDCB6E":"#444"}`,background:task.status==="done"?"#00B894":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{task.status==="done"&&<I n="check" s={10} c="#fff"/>}{task.status==="in-progress"&&<div style={{width:6,height:6,borderRadius:1.5,background:"#FDCB6E"}}/>}</div>
   <div style={{flex:1,minWidth:0}}><div style={{fontSize:13,fontWeight:500,opacity:task.status==="done"?.4:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{task.title}</div></div>
@@ -334,11 +318,83 @@ function TR({task,onClick}){const ph=PHASES_DATA.find(p=>p.num===task.phase);ret
   <Av id={task.assignee} sz={20}/>
 </div>}
 
-// ─── MAIN ───
+/* ═══════════════════════════════════════════════════════════
+   FIX: Extracted KanbanView and CalView as proper React
+   components so useState hooks are called legally.
+   Previously they were plain functions called during render
+   which violates the Rules of Hooks.
+   ═══════════════════════════════════════════════════════════ */
+
+function KanbanView({data,search,setSearch,openTask,uT,act,setModal}){
+  const[dragId,setDragId]=useState(null);
+  const[dragOver,setDragOver]=useState(null);
+  const cols=[{id:"todo",label:"To do",c:"#555"},{id:"in-progress",label:"In progress",c:"#FDCB6E"},{id:"done",label:"Done",c:"#00B894"}];
+  const ft=data.tasks.filter(t=>{if(!search)return true;const q=search.toLowerCase();return t.title.toLowerCase().includes(q)||t.assignee?.toLowerCase().includes(q)});
+  const drop=(cid)=>{if(!dragId)return;const t=data.tasks.find(x=>x.id===dragId);if(t&&t.status!==cid){uT(dragId,{status:cid});act("status",`moved "${t.title}" to ${cid}`)}setDragId(null);setDragOver(null)};
+  return<div style={{padding:"28px 32px",height:"100%",display:"flex",flexDirection:"column"}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexShrink:0}}>
+      <div><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Kanban board</div><div style={{fontSize:13,color:"#888",marginTop:2}}>Drag tasks between columns · Click to edit</div></div>
+      <div style={{display:"flex",gap:8,alignItems:"center"}}>
+        <div style={{position:"relative"}}><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..." style={{...inp,width:180,paddingLeft:32}}/><div style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)"}}><I n="search" s={13} c="#555"/></div></div>
+        <button onClick={()=>setModal({type:"add"})} style={{...btn,display:"flex",alignItems:"center",gap:6,padding:"9px 14px"}}><I n="plus" s={14} c="#fff"/>Add task</button>
+      </div>
+    </div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,flex:1,minHeight:0}}>
+      {cols.map(col=>{const items=ft.filter(t=>t.status===col.id);return<div key={col.id} onDragOver={e=>{e.preventDefault();setDragOver(col.id)}} onDragLeave={()=>setDragOver(null)} onDrop={()=>drop(col.id)} style={{background:dragOver===col.id?"rgba(255,255,255,0.03)":"#0c0c0f",borderRadius:14,padding:12,border:dragOver===col.id?`1.5px dashed ${col.c}50`:"1px solid rgba(255,255,255,0.06)",overflowY:"auto",transition:"all .15s"}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12,padding:"0 4px"}}><div style={{width:8,height:8,borderRadius:"50%",background:col.c}}/><div style={{fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.06em",color:"#888"}}>{col.label}</div><div style={{fontSize:11,color:"#555",marginLeft:"auto"}}>{items.length}</div></div>
+        {items.map(t=>{const ph=PHASES_DATA.find(p=>p.num===t.phase);return<div key={t.id} draggable onDragStart={()=>setDragId(t.id)} onDragEnd={()=>{setDragId(null);setDragOver(null)}} onClick={()=>openTask(t)} style={{background:dragId===t.id?"rgba(255,255,255,0.08)":"#111114",borderRadius:10,padding:"12px 14px",marginBottom:6,border:"1px solid rgba(255,255,255,0.06)",cursor:"grab",transition:"all .1s",opacity:dragId===t.id?.5:1}} onMouseEnter={e=>{if(dragId)return;e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"}} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}>
+          <div style={{fontSize:12,fontWeight:600,marginBottom:8,lineHeight:1.4}}>{t.title}</div>
+          <div style={{display:"flex",alignItems:"center",gap:5}}><span style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:`${ph?.color}15`,color:ph?.color,fontWeight:600}}>P{t.phase}</span>{t.priority==="high"&&<span style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(231,76,60,0.1)",color:"#E74C3C",fontWeight:600}}>HIGH</span>}<div style={{marginLeft:"auto"}}><Av id={t.assignee} sz={18}/></div></div>
+        </div>})}
+      </div>})}
+    </div>
+  </div>;
+}
+
+function CalView({data,setModal}){
+  const[off,setOff]=useState(0);
+  const now=new Date(2025,4+off,1);const yr=now.getFullYear(),mo=now.getMonth(),dim=new Date(yr,mo+1,0).getDate(),sd=new Date(yr,mo,1).getDay();
+  const mM={},mtM={};MS.forEach(m=>{const d=new Date(m.date);if(d.getFullYear()===yr&&d.getMonth()===mo)mM[d.getDate()]=m});(data.meetings||[]).forEach(m=>{const d=new Date(m.date);if(d.getFullYear()===yr&&d.getMonth()===mo){const dy=d.getDate();if(!mtM[dy])mtM[dy]=[];mtM[dy].push(m)}});
+  const cells=[];for(let i=0;i<sd;i++)cells.push(null);for(let d=1;d<=dim;d++)cells.push(d);
+  return<div style={{padding:"28px 32px"}}>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Calendar</div><button onClick={()=>setModal({type:"mtg"})} style={{...btn,display:"flex",alignItems:"center",gap:6,padding:"8px 14px",fontSize:12}}><I n="plus" s={13} c="#fff"/>Add meeting</button></div>
+    <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:16}}><button onClick={()=>setOff(p=>p-1)} style={ghost}>Prev</button><div style={{fontSize:16,fontWeight:700,minWidth:160,textAlign:"center"}}>{now.toLocaleDateString("en",{month:"long",year:"numeric"})}</div><button onClick={()=>setOff(p=>p+1)} style={ghost}>Next</button></div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
+      {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=><div key={d} style={{padding:8,textAlign:"center",fontSize:10,color:"#555",fontWeight:600,textTransform:"uppercase"}}>{d}</div>)}
+      {cells.map((d,i)=><div key={i} style={{minHeight:80,background:d?"#111114":"transparent",borderRadius:8,padding:d?"6px 8px":0,border:d?"1px solid rgba(255,255,255,0.03)":"none"}}>{d&&<><div style={{fontSize:12,fontWeight:500,color:"#888",marginBottom:4}}>{d}</div>{mM[d]&&<div style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(231,76,60,0.12)",color:"#E74C3C",fontWeight:600,marginBottom:3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{mM[d].title}</div>}{mtM[d]?.map((m,j)=><div key={j} style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(108,92,231,0.12)",color:"#6C5CE7",fontWeight:500,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.title}</div>)}</>}</div>)}
+    </div>
+    <div style={{marginTop:24}}><div style={{fontSize:13,fontWeight:600,color:"#888",marginBottom:10}}>Academic milestones</div>{MS.map((m,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.03)"}}><div style={{fontSize:11,color:"#E74C3C",fontWeight:600,minWidth:70}}>{new Date(m.date).toLocaleDateString("en",{day:"numeric",month:"short"})}</div><div style={{fontSize:12,fontWeight:500}}>{m.title}</div><div style={{fontSize:11,color:"#555"}}>{m.desc}</div></div>)}</div>
+  </div>;
+}
+
+// ─── MAIN APP ───
 function App(){
   const[user,setUser]=useState(null);const[data,setData]=useState(null);const[view,setView]=useState("dashboard");const[loading,setLoading]=useState(true);const[sp,setSp]=useState(null);const[modal,setModal]=useState(null);const[search,setSearch]=useState("");const sr=useRef(null);
-  useEffect(()=>{if(window._fbRef){firebase.database().ref(window._fbRef).on("value",snap=>{const val=snap.val();setData(val||defs());setLoading(false)});return()=>firebase.database().ref(window._fbRef).off();}else{try{const r=localStorage.getItem("sbr-pm-v4");setData(r?JSON.parse(r):defs())}catch(e){setData(defs())}setLoading(false)}},[]);
-  useEffect(()=>{if(!data)return;clearTimeout(sr.current);sr.current=setTimeout(()=>{if(window._fbRef){firebase.database().ref(window._fbRef).set(data)}else{try{localStorage.setItem("sbr-pm-v4",JSON.stringify(data))}catch(e){}}},500)},[data]);
+
+  useEffect(()=>{
+    if(window._fbRef){
+      const ref=firebase.database().ref(window._fbRef);
+      const handler=(snap)=>{const val=snap.val();setData(val||defs());setLoading(false)};
+      ref.on("value",handler);
+      return()=>ref.off("value",handler);
+    }else{
+      try{const r=localStorage.getItem("sbr-pm-v4");setData(r?JSON.parse(r):defs())}catch(e){setData(defs())}
+      setLoading(false);
+    }
+  },[]);
+
+  useEffect(()=>{
+    if(!data)return;
+    clearTimeout(sr.current);
+    sr.current=setTimeout(()=>{
+      if(window._fbRef){
+        firebase.database().ref(window._fbRef).set(data).catch(err=>console.error("Firebase save error:",err));
+      }else{
+        try{localStorage.setItem("sbr-pm-v4",JSON.stringify(data))}catch(e){console.error("localStorage save error:",e)}
+      }
+    },500);
+  },[data]);
+
   const act=useCallback((a,d)=>{if(!user)return;setData(p=>({...p,activity:[{id:Date.now().toString(),user:user.id,action:a,detail:d,time:new Date().toISOString()},...(p.activity||[])].slice(0,100)}))},[user]);
   const uT=useCallback((id,u)=>setData(p=>({...p,tasks:p.tasks.map(t=>t.id===id?{...t,...u}:t)})),[]);
   const uD=useCallback((id,u)=>setData(p=>({...p,documents:p.documents.map(d=>d.id===id?{...d,...u}:d)})),[]);
@@ -348,14 +404,14 @@ function App(){
   if(!data)return null;
 
   const nav=[{id:"dashboard",label:"My Day",icon:"home"},{id:"phases",label:"Phases",icon:"phase"},{id:"kanban",label:"Kanban",icon:"kanban"},{id:"calendar",label:"Calendar",icon:"cal"},{id:"team",label:"Team",icon:"users"},{id:"documents",label:"Documents",icon:"doc"},{id:"meetings",label:"Meetings",icon:"meet"},{id:"activity",label:"Activity",icon:"clock"}];
-  const dsC={"not-started":"#555","in-progress":"#FDCB6E","review":"#0984E3","complete":"#00B894","changes-requested":"#E74C3C"};
-  const dsL={"not-started":"Not started","in-progress":"In progress","review":"In review","complete":"Approved","changes-requested":"Changes requested"};
   const openTask=(t)=>setModal({type:"task",task:t});
   const addNewTask=(t)=>{setData(p=>({...p,tasks:[...p.tasks,t]}));act("task",`created "${t.title}"`);setModal(null)};
   const addMtg=(m)=>{setData(p=>({...p,meetings:[...(p.meetings||[]),{id:Date.now().toString(),...m,createdBy:user.id}]}));act("meeting",`scheduled "${m.title}"`);setModal(null)};
   const delMtg=(id)=>{const m=(data.meetings||[]).find(x=>x.id===id);setData(p=>({...p,meetings:p.meetings.filter(x=>x.id!==id)}));act("meeting",`deleted "${m?.title}"`);setModal(null)};
 
-  // ─── VIEWS ───
+  const dsC2={"not-started":"#555","in-progress":"#FDCB6E","review":"#0984E3","complete":"#00B894","changes-requested":"#E74C3C"};
+  const dsL2={"not-started":"Not started","in-progress":"In progress","review":"In review","complete":"Approved","changes-requested":"Changes requested"};
+
   const dashView=()=>{
     const my=data.tasks.filter(t=>t.assignee===user.id||t.assignee==="All");const dn=my.filter(t=>t.status==="done").length;const pc=my.length?Math.round((dn/my.length)*100):0;
     const high=my.filter(t=>t.status!=="done"&&t.priority==="high");const ip=my.filter(t=>t.status==="in-progress");
@@ -396,47 +452,7 @@ function App(){
       <div style={{fontSize:14,fontWeight:700,marginBottom:10}}>Tasks ({ts.length})</div>
       {ts.map(t=><TR key={t.id} task={t} onClick={()=>openTask(t)}/>)}
       <div style={{fontSize:14,fontWeight:700,marginTop:28,marginBottom:10}}>Documents ({docs.length})</div>
-      {docs.map(d=>{const dsC2={"not-started":"#555","in-progress":"#FDCB6E","review":"#0984E3","complete":"#00B894","changes-requested":"#E74C3C"};const dsL2={"not-started":"Not started","in-progress":"In progress","review":"In review","complete":"Approved","changes-requested":"Changes requested"};return<div key={d.id} onClick={()=>setModal({type:"doc-detail",doc:d})} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:"#111114",borderRadius:10,marginBottom:4,border:"1px solid rgba(255,255,255,0.06)",cursor:"pointer",transition:"all .1s"}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}><I n="doc" s={14} c={dsC2[d.status]||"#555"}/><div style={{flex:1,minWidth:0}}><div style={{fontSize:12}}>{d.name}</div>{d.submission&&<div style={{fontSize:10,color:"#666",marginTop:2}}>Submitted by {TEAM.find(t=>t.id===d.submission.submittedBy)?.name}</div>}</div><span style={{fontSize:9,padding:"3px 8px",borderRadius:5,background:(dsC2[d.status]||"#555")+"18",color:dsC2[d.status]||"#555",fontWeight:600}}>{dsL2[d.status]||d.status}</span></div>})}
-    </div>;
-  };
-
-  const kanbanView=()=>{
-    const[dragId,setDragId]=useState(null);const[dragOver,setDragOver]=useState(null);
-    const cols=[{id:"todo",label:"To do",c:"#555"},{id:"in-progress",label:"In progress",c:"#FDCB6E"},{id:"done",label:"Done",c:"#00B894"}];
-    const ft=data.tasks.filter(t=>{if(!search)return true;const q=search.toLowerCase();return t.title.toLowerCase().includes(q)||t.assignee?.toLowerCase().includes(q)});
-    const drop=(cid)=>{if(!dragId)return;const t=data.tasks.find(x=>x.id===dragId);if(t&&t.status!==cid){uT(dragId,{status:cid});act("status",`moved "${t.title}" to ${cid}`)}setDragId(null);setDragOver(null)};
-    return<div style={{padding:"28px 32px",height:"100%",display:"flex",flexDirection:"column"}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,flexShrink:0}}>
-        <div><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Kanban board</div><div style={{fontSize:13,color:"#888",marginTop:2}}>Drag tasks between columns · Click to edit</div></div>
-        <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          <div style={{position:"relative"}}><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search..." style={{...inp,width:180,paddingLeft:32}}/><div style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)"}}><I n="search" s={13} c="#555"/></div></div>
-          <button onClick={()=>setModal({type:"add"})} style={{...btn,display:"flex",alignItems:"center",gap:6,padding:"9px 14px"}}><I n="plus" s={14} c="#fff"/>Add task</button>
-        </div>
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:14,flex:1,minHeight:0}}>
-        {cols.map(col=>{const items=ft.filter(t=>t.status===col.id);return<div key={col.id} onDragOver={e=>{e.preventDefault();setDragOver(col.id)}} onDragLeave={()=>setDragOver(null)} onDrop={()=>drop(col.id)} style={{background:dragOver===col.id?"rgba(255,255,255,0.03)":"#0c0c0f",borderRadius:14,padding:12,border:dragOver===col.id?`1.5px dashed ${col.c}50`:"1px solid rgba(255,255,255,0.06)",overflowY:"auto",transition:"all .15s"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12,padding:"0 4px"}}><div style={{width:8,height:8,borderRadius:"50%",background:col.c}}/><div style={{fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.06em",color:"#888"}}>{col.label}</div><div style={{fontSize:11,color:"#555",marginLeft:"auto"}}>{items.length}</div></div>
-          {items.map(t=>{const ph=PHASES_DATA.find(p=>p.num===t.phase);return<div key={t.id} draggable onDragStart={()=>setDragId(t.id)} onDragEnd={()=>{setDragId(null);setDragOver(null)}} onClick={()=>openTask(t)} style={{background:dragId===t.id?"rgba(255,255,255,0.08)":"#111114",borderRadius:10,padding:"12px 14px",marginBottom:6,border:"1px solid rgba(255,255,255,0.06)",cursor:"grab",transition:"all .1s",opacity:dragId===t.id?.5:1}} onMouseEnter={e=>{if(dragId)return;e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"}} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}>
-            <div style={{fontSize:12,fontWeight:600,marginBottom:8,lineHeight:1.4}}>{t.title}</div>
-            <div style={{display:"flex",alignItems:"center",gap:5}}><span style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:`${ph?.color}15`,color:ph?.color,fontWeight:600}}>P{t.phase}</span>{t.priority==="high"&&<span style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(231,76,60,0.1)",color:"#E74C3C",fontWeight:600}}>HIGH</span>}<div style={{marginLeft:"auto"}}><Av id={t.assignee} sz={18}/></div></div>
-          </div>})}
-        </div>})}
-      </div>
-    </div>;
-  };
-
-  const calView=()=>{
-    const[off,setOff]=useState(0);const now=new Date(2025,4+off,1);const yr=now.getFullYear(),mo=now.getMonth(),dim=new Date(yr,mo+1,0).getDate(),sd=new Date(yr,mo,1).getDay();
-    const mM={},mtM={};MS.forEach(m=>{const d=new Date(m.date);if(d.getFullYear()===yr&&d.getMonth()===mo)mM[d.getDate()]=m});(data.meetings||[]).forEach(m=>{const d=new Date(m.date);if(d.getFullYear()===yr&&d.getMonth()===mo){const dy=d.getDate();if(!mtM[dy])mtM[dy]=[];mtM[dy].push(m)}});
-    const cells=[];for(let i=0;i<sd;i++)cells.push(null);for(let d=1;d<=dim;d++)cells.push(d);
-    return<div style={{padding:"28px 32px"}}>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Calendar</div><button onClick={()=>setModal({type:"mtg"})} style={{...btn,display:"flex",alignItems:"center",gap:6,padding:"8px 14px",fontSize:12}}><I n="plus" s={13} c="#fff"/>Add meeting</button></div>
-      <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:16}}><button onClick={()=>setOff(p=>p-1)} style={ghost}>Prev</button><div style={{fontSize:16,fontWeight:700,minWidth:160,textAlign:"center"}}>{now.toLocaleDateString("en",{month:"long",year:"numeric"})}</div><button onClick={()=>setOff(p=>p+1)} style={ghost}>Next</button></div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2}}>
-        {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d=><div key={d} style={{padding:8,textAlign:"center",fontSize:10,color:"#555",fontWeight:600,textTransform:"uppercase"}}>{d}</div>)}
-        {cells.map((d,i)=><div key={i} style={{minHeight:80,background:d?"#111114":"transparent",borderRadius:8,padding:d?"6px 8px":0,border:d?"1px solid rgba(255,255,255,0.03)":"none"}}>{d&&<><div style={{fontSize:12,fontWeight:500,color:"#888",marginBottom:4}}>{d}</div>{mM[d]&&<div style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(231,76,60,0.12)",color:"#E74C3C",fontWeight:600,marginBottom:3,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{mM[d].title}</div>}{mtM[d]?.map((m,j)=><div key={j} style={{fontSize:9,padding:"2px 5px",borderRadius:4,background:"rgba(108,92,231,0.12)",color:"#6C5CE7",fontWeight:500,marginBottom:2,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.title}</div>)}</>}</div>)}
-      </div>
-      <div style={{marginTop:24}}><div style={{fontSize:13,fontWeight:600,color:"#888",marginBottom:10}}>Academic milestones</div>{MS.map((m,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.03)"}}><div style={{fontSize:11,color:"#E74C3C",fontWeight:600,minWidth:70}}>{new Date(m.date).toLocaleDateString("en",{day:"numeric",month:"short"})}</div><div style={{fontSize:12,fontWeight:500}}>{m.title}</div><div style={{fontSize:11,color:"#555"}}>{m.desc}</div></div>)}</div>
+      {docs.map(d=><div key={d.id} onClick={()=>setModal({type:"doc-detail",doc:d})} style={{display:"flex",alignItems:"center",gap:10,padding:"12px 14px",background:"#111114",borderRadius:10,marginBottom:4,border:"1px solid rgba(255,255,255,0.06)",cursor:"pointer",transition:"all .1s"}} onMouseEnter={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.12)"} onMouseLeave={e=>e.currentTarget.style.borderColor="rgba(255,255,255,0.06)"}><I n="doc" s={14} c={dsC2[d.status]||"#555"}/><div style={{flex:1,minWidth:0}}><div style={{fontSize:12}}>{d.name}</div>{d.submission&&<div style={{fontSize:10,color:"#666",marginTop:2}}>Submitted by {TEAM.find(t=>t.id===d.submission.submittedBy)?.name}</div>}</div><span style={{fontSize:9,padding:"3px 8px",borderRadius:5,background:(dsC2[d.status]||"#555")+"18",color:dsC2[d.status]||"#555",fontWeight:600}}>{dsL2[d.status]||d.status}</span></div>)}
     </div>;
   };
 
@@ -456,8 +472,6 @@ function App(){
   </div>;
 
   const docsView=()=>{const all=data.documents,comp=all.filter(d=>d.status==="complete").length,pc=all.length?Math.round((comp/all.length)*100):0;
-    const dsC2={"not-started":"#555","in-progress":"#FDCB6E","review":"#0984E3","complete":"#00B894","changes-requested":"#E74C3C"};
-    const dsL2={"not-started":"Not started","in-progress":"In progress","review":"In review","complete":"Approved","changes-requested":"Changes requested"};
     return<div style={{padding:"28px 32px",maxWidth:900}}>
       <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",marginBottom:24}}><div><div style={{fontSize:22,fontWeight:700,letterSpacing:"-0.02em"}}>Document hub</div><div style={{fontSize:13,color:"#888",marginTop:2}}>Submit docs via Google Drive links · {all.length} documents</div></div><div style={{textAlign:"right"}}><div style={{fontSize:22,fontWeight:700,color:"#00B894"}}>{pc}%</div><div style={{fontSize:10,color:"#555"}}>{comp}/{all.length}</div></div></div>
       {PHASES_DATA.map(ph=>{const ds=all.filter(d=>d.phase===ph.num);if(!ds.length)return null;return<div key={ph.id} style={{marginBottom:20}}>
@@ -508,8 +522,8 @@ function App(){
     <div style={{flex:1,overflowY:"auto"}}>
       {view==="dashboard"&&dashView()}
       {view==="phases"&&phasesView()}
-      {view==="kanban"&&kanbanView()}
-      {view==="calendar"&&calView()}
+      {view==="kanban"&&<KanbanView data={data} search={search} setSearch={setSearch} openTask={openTask} uT={uT} act={act} setModal={setModal}/>}
+      {view==="calendar"&&<CalView data={data} setModal={setModal}/>}
       {view==="team"&&teamView()}
       {view==="documents"&&docsView()}
       {view==="meetings"&&mtgView()}
@@ -529,9 +543,6 @@ function App(){
     {modal?.type==="doc-reject"&&<RejectReason doc={modal.doc} onClose={()=>setModal(null)} onSave={(reason)=>{const rej=[...(modal.doc.submission?.rejections||[]),{by:user.id,reason,at:new Date().toISOString()}];uD(modal.doc.id,{status:"changes-requested",submission:{...modal.doc.submission,rejections:rej}});act("document",`requested changes on "${modal.doc.name}"`);setModal(null)}}/>}
   </div>;
 }
-
-
-
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
